@@ -37,9 +37,11 @@ gem "bootsnap", require: false
 # gem "rack-cors"
 # Auth
 gem 'devise_token_auth', '>= 1.2.0', git: "https://github.com/lynndylanhurley/devise_token_auth"
+gem 'cloudinary'
 
 group :development, :test do
   gem 'pry'
+  gem 'dotenv-rails'
   gem 'faker'
 end
 

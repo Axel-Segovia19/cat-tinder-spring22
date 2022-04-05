@@ -8,6 +8,7 @@ export const AuthConsumer = AuthContext.Consumer;
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [errors, setErrors] = useState(null)
 
   const navigate = useNavigate()
 
@@ -17,7 +18,10 @@ const AuthProvider = ({ children }) => {
         setUser(res.data.data)
         navigate('/')
       })
-      .catch( err => console.log(err))
+      .catch( err => {
+        console.log(err)
+        setErrors({ variant: 'danger', msg: err.response.data.errors.full_messages[0] })
+      })
   }
 
   const handleLogin = (user) => {
@@ -26,7 +30,10 @@ const AuthProvider = ({ children }) => {
         setUser(res.data.data)
         navigate('/')
       })
-      .catch( err => console.log(err))
+      .catch( err => {
+        console.log(err)
+        setErrors({ variant: 'danger', msg: err.response.data.errors[0] })
+      })
   }
 
   const handleLogout = () => {
@@ -38,14 +45,29 @@ const AuthProvider = ({ children }) => {
       .catch( err => console.log(err))
   }
 
+  const updateUser = (id, user) => {
+    let data = new FormData()
+    data.append('file', user.image)
+    data.append('fname', user.fname)
+    data.append('lname', user.lname)
+    data.append('email', user.email)
+    data.append('age', user.age)
+    axios.put(`/api/users/${id}`, data)
+      .then( res => setUser(res.data))
+      .catch( err => console.log(err))
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
+      errors,
+      setErrors,
       handleRegister,
       handleLogin,
       handleLogout,
       authenticated: user !== null, 
       setUser: (user) => setUser(user),
+      updateUser, 
     }}>
       { children }
     </AuthContext.Provider>
